@@ -434,7 +434,7 @@ pageInit.gamedetails = placeId => {
 			const [counter, setCounter] = React.useState(0)
 			const snapshot = getSnapshot()
 			
-			const refresh = () => {
+			const refresh = }) => {
 				if(!Object.is(snapshot, getSnapshot())) {
 					setCounter(counter + 1)
 				}
@@ -539,25 +539,34 @@ pageInit.gamedetails = placeId => {
 			}
 		)
 		
-		reactHook.hijackConstructor( // GameSection
-			(type, props) => props.loadMoreGameInstances,
-			(target, thisArg, args) => {
-				if(args[0].btrPagerEnabled) {
-					args[0].showLoadMoreButton = false
-				}
-				
-				const result = target.apply(thisArg, args)
-				
-				try {
-					const list = reactHook.queryElement(result, x => x.props.id?.includes("running-games"))
-					
-					if(args[0].btrPagerEnabled) {
-						list.props.children.push(
-							React.createElement(btrPagerConstructor, {
-								refreshGameInstances: args[0].refreshGameInstances
-							})
-						)
-					}
+		reactHook.hijackConstructor(
+    (type, props) => props.loadMoreGameInstances,
+    (target, thisArg, args) => {
+        if (args[0].btrPagerEnabled) {
+            args[0].showLoadMoreButton = false
+        }
+        
+        const result = target.apply(thisArg, args)
+        
+        try {
+            const list = reactHook.queryElement(result, x => x.props.id?.includes("running-games"))
+            
+            if (args[0].btrPagerEnabled) {
+                // Add region filter above the server list
+                list.props.children.unshift(
+                    React.createElement(RegionFilter, {
+                        refreshGameInstances: args[0].refreshGameInstances
+                    })
+                )
+                
+                // Add pager at the bottom
+                list.props.children.push(
+                    React.createElement(btrPagerConstructor, {
+                        refreshGameInstances: args[0].refreshGameInstances
+                    })
+                )
+            }
+
 					
 					const ul = reactHook.queryElement(list, x => x.type === "ul", 5)
 					const servers = ul?.props?.children
@@ -568,12 +577,12 @@ pageInit.gamedetails = placeId => {
 						}
 					}
 				} catch(ex) {
-					console.error(ex)
-				}
-				
-				return result
-			}
-		)
+            console.error(ex)
+        }
+        
+        return result
+    }
+)
 		
 		reactHook.hijackConstructor( // App (serverList)
 			(type, props) => type.toString().includes("getPublicGameInstances"),
