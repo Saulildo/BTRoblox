@@ -80,6 +80,7 @@ const DEFAULT_SETTINGS = {
 		addServerPager: { value: true },
 		showServerRegion: { value: "ping", validValues: ["none", "ping", "region", "both", "combined"] },
 		compactBadgeStats: { value: true }
+		regionFilter: { value: "all" }
 	},
 	groups: {
 		shoutAlerts: { value: false },
