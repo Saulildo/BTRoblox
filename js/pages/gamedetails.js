@@ -19,7 +19,7 @@ pageInit.gamedetails = placeId => {
 		
 		const loadLargePage = async largePageIndex => {
 			if(largePageIndex >= cursors.length + 2) {
-				throw new Error("Tried to load page with no cursor")
+				throw new Error("Tried to load pagenull) no cursor")
 			}
 			
 			const cursor = cursors[largePageIndex - 2] ?? ""
@@ -147,7 +147,49 @@ pageInit.gamedetails = placeId => {
 				return result
 			}
 		}
-		
+		const RegionFilter = ({ refreshGameInstances }) => {
+    const [selectedRegion, setSelectedRegion] = React.useState(settings.gamedetails.regionFilter)
+    
+    const regions = {
+        all: "All Regions",
+        na: "North America",
+        eu: "Europe",
+        as: "Asia",
+        oc: "Oceania",
+        sa: "South America",
+        af: "Africa"
+    }
+
+    const handleRegionChange = (region) => {
+        setSelectedRegion(region)
+        settings.gamedetails.regionFilter = region
+        
+        // Reset pager to first page when filter changes
+        btrPager.targetPage = 1
+        refreshGameInstances({ btrRefresh: true })
+    }
+
+    return React.createElement(
+        "div",
+        { className: "btr-region-filter" },
+        React.createElement(
+            "select",
+            {
+                className: "input-field",
+                value: selectedRegion,
+                onChange: (e) => handleRegionChange(e.target.value)
+            },
+            Object.entries(regions).map(([value, label]) =>
+                React.createElement(
+                    "option",
+                    { key: value, value: value },
+                    label
+                )
+            )
+        )
+    )
+			
+		}
 		let getGameInstancesPromise
 		const btrGetPublicGameInstances = (placeId, cursor, params) => {
 			if(!params?.btrRefresh) {
@@ -164,29 +206,7 @@ pageInit.gamedetails = placeId => {
 				}
 			}
 			
-			if(!getGameInstancesPromise) {
-				btrPager.loading = true
-				btrPagerState.update()
-				
-				const thisPromise = getGameInstancesPromise = loadServers().then(
-					servers => ({
-						data: {
-							nextPageCursor: btrPager.currentPage < btrPager.maxPage ? "idk" : null,
-							data: servers
-						}
-					}),
-					() => null
-				).finally(() => {
-					if(getGameInstancesPromise === thisPromise) {
-						btrPager.loading = false
-						btrPagerState.update()
-						
-						getGameInstancesPromise = null
-					}
-				})
-			}
 			
-			return getGameInstancesPromise
 		}
 		
 		const btrPagerConstructor = ({ refreshGameInstances }) => {
@@ -199,7 +219,52 @@ pageInit.gamedetails = placeId => {
 			
 			const updateInputWidth = () => {
 				inputRef.current.style.width = "0px"
-				inputRef.current.style.width = `${Math.max(32, Math.min(100, inputRef.current.scrollWidth + 12))}px`
+				inputRef.current.style.width = `${Math.max(32, Math.min(100, inputRef.current.scrollWidth + 12)if (!getGameInstancesPromise) {
+        btrPager.loading = true
+        btrPagerState.update()
+        
+        const thisPromise = getGameInstancesPromise = loadServers().then(
+            servers => {
+                // Filter servers by region if a specific region is selected
+                const selectedRegion = settings.gamedetails.regionFilter
+                let filteredServers = servers
+                
+                if (selectedRegion !== 'all') {
+                    filteredServers = servers.filter(server => {
+                        const region = globalServerRegions[server.id]?.location?.country?.code
+                        
+                        switch (selectedRegion) {
+                            case 'na': return ['US', 'CA'].includes(region)
+                            case 'eu': return ['GB', 'DE', 'FR', 'NL', 'SE'].includes(region)
+                            case 'as': return ['JP', 'KR', 'SG', 'IN'].includes(region)
+                            case 'oc': return ['AU', 'NZ'].includes(region)
+                            case 'sa': return ['BR', 'AR'].includes(region)
+                            case 'af': return ['ZA', 'NG'].includes(region)
+                            default: return true
+                        }
+                    })
+                }
+                
+                return {
+                    data: {
+                        nextPageCursor: btrPager.currentPage < btrPager.maxPage ? "idk" : null,
+                        data: filteredServers
+                    }
+                }
+            },
+            () => null
+        ).finally(() => {
+            if (getGameInstancesPromise === thisPromise) {
+                btrPager.loading = false
+                btrPagerState.update()
+                
+                getGameInstancesPromise = null
+            }
+        })
+    }
+    
+    return getGameInstancesPromise
+									   })}px`
 			}
 			
 			React.useEffect(updateInputWidth, [])
@@ -320,7 +385,7 @@ pageInit.gamedetails = placeId => {
 					),
 					
 					React.createElement(
-						"li", { className: `btr-pager-last` },
+						"li", li", {sName: `btr-pager-last` },
 						React.createElement(
 							"button", {
 								className: "btn-generic-last-page-sm",
@@ -330,11 +395,8 @@ pageInit.gamedetails = placeId => {
 									btrPager.targetPage = Math.max(btrPager.maxPage ?? 1, btrPager.currentPage + 50)
 									refreshGameInstances({ btrRefresh: true })
 								}
-							},
-							React.createElement(
-								"span", { className: "icon-last-page" }
-							)
-						)
+							}ist)					React.createElement(
+								"span", { className: "icon-last-page} catch(ex	span", {)
 					)
 				)
 			)
@@ -416,7 +478,7 @@ pageInit.gamedetails = placeId => {
 					const showPing = ["ping", "both", "combined"].includes(regionSetting)
 					const showRegion = ["region", "both", "combined"].includes(regionSetting)
 					
-					if(showRegion) {
+		+= ` (${owRegion) {
 						serverDetails = useSyncExternalStore(callback => {
 							onRegionsChanged.add(callback)
 							return () => onRegionsChanged.delete(callback)
