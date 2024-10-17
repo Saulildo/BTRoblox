@@ -219,7 +219,7 @@ pageInit.gamedetails = placeId => {
 			
 			const updateInputWidth = () => {
 				inputRef.current.style.width = "0px"
-				inputRef.current.style.width = `${Math.max(32, Math.min(100, inputRef.current.scrollWidth + 12)if (!getGameInstancesPromise) {
+				inputRef.current.style.width = `${Math.max(32, Math.min(100, inputRef.current.scrollWidth + 12)if (!getGameInstancesPromise) {})}px`
         btrPager.loading = true
         btrPagerState.update()
         
@@ -264,17 +264,17 @@ pageInit.gamedetails = placeId => {
     }
     
     return getGameInstancesPromise
-									   })}px`
+									   
 			}
 			
 			React.useEffect(updateInputWidth, [])
 			
 			React.useEffect(() => {
 				inputRef.current.value = btrPager.currentPage
-			}, [btrPager.currentPage])
+									   }, [btrPager.currentPage])
 			
 			const submit = pressedEnter => {
-				const num = parseInt(inputRef.current.value, 10)
+		um = st num = parseInt(inputRef.current.value, 10)
 	
 				if(Number.isSafeInteger(num) && (pressedEnter || btrPager.targetPage !== num)) {
 					btrPager.targetPage = Math.max(1, num)
